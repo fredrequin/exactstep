@@ -16,14 +16,14 @@
 class device: public memory_base
 {
 public:
-    device(std::string name, uint32_t base, uint32_t size, device *irq_ctrl = NULL, int irq = -1):
-    memory_base(name, base, size)
+    device(std::string name, uint32_t base, uint32_t size, device *irq_ctrl = NULL, int irq = -1) :
+        m_irq_number { irq },
+        memory_base(name, base, size)
     {
-        m_irq_ctrl   = irq_ctrl;
-        m_irq_number = irq;
-        m_irq_raised = false;
-        m_irq_dropped= false;
-        device_next  = NULL;
+        m_irq_ctrl    = irq_ctrl;
+        m_irq_raised  = false;
+        m_irq_dropped = false;
+        device_next   = NULL;
     }
 
     virtual void set_irq(int irq) { }
@@ -94,7 +94,7 @@ public:
     device*          device_next;
 
 protected:
-    int              m_irq_number;
+    const int        m_irq_number;
     device         * m_irq_ctrl;
     bool             m_irq_raised;
     bool             m_irq_dropped;

@@ -18,11 +18,11 @@
 class memory_base
 {
 public:
-    memory_base(std::string name, uint32_t base, uint32_t size)
+    memory_base(std::string name, uint32_t base, uint32_t size) :
+        m_base { base },
+        m_size { size },
+        m_name { name }
     {
-        m_base      = base;
-        m_size      = size;
-        m_name      = name;
         m_trace     = false;
         next        = NULL;        
     }
@@ -123,10 +123,10 @@ public:
     memory_base *next;
 
 protected:
-    uint32_t    m_base;
-    uint32_t    m_size;
-    std::string m_name;
-    bool        m_trace;
+    const uint32_t    m_base;
+    const uint32_t    m_size;
+    const std::string m_name;
+    bool              m_trace;
 };
 
 //-----------------------------------------------------------------
@@ -139,13 +139,15 @@ public:
     {
         if (buf)
             m_mem = buf;
-        else
+        else if (size)
             m_mem  = new uint8_t[size];
+        else
+            m_mem = NULL;
     }
 
     virtual void reset(void)
     {
-        memset(m_mem, 0, m_size);
+        if (m_mem) memset(m_mem, 0, m_size);
     }
 
     bool write8(uint32_t addr, uint8_t data)
