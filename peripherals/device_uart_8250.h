@@ -119,7 +119,7 @@ public:
     bool write32(uint32_t address, uint32_t data) { return false; }
     bool read32(uint32_t address, uint32_t &data) { return false; }
 
-    int clock(void)
+    int clock(uint64_t cycles)
     {
         // No rx char in the buffer, poll again...
         if (m_rx == -1)

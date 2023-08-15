@@ -50,7 +50,7 @@ public:
     virtual bool      get_stopped(void) { return m_stopped; }
 
     // Execute one instruction
-    virtual void      step(void);
+    virtual void      step(uint64_t cycles);
 
     // Breakpoints
     virtual bool      get_break(void);

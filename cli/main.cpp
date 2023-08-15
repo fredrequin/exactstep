@@ -459,8 +459,6 @@ int main(int argc, char *argv[])
     if (trace)
         sim->enable_trace(trace_mask);
 
-    cycles = 0;
-
     // Catch SIGINT to restore terminal settings on exit
     signal(SIGINT, sigint_handler);
 
@@ -468,11 +466,10 @@ int main(int argc, char *argv[])
     while (!sim->get_fault() && !sim->get_stopped() && current_pc != stop_pc && !m_user_abort)
     {
         current_pc = sim->get_pc();
-        sim->step();
+        sim->step(cycles);
         cycles++;
 
-        if (max_cycles != (int64_t)-1 && max_cycles == cycles)
-            break;
+        if (max_cycles == cycles) break;
 
         // Turn trace on
         if (trace_pc == current_pc)

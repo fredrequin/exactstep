@@ -73,7 +73,7 @@ bool virtio_net::has_rx_space(void)
 //--------------------------------------------------------------------
 // clock:
 //--------------------------------------------------------------------
-int virtio_net::clock(void) 
+int virtio_net::clock(cycles) 
 {
     uint8_t packet[VIRTIO_MAX_MTU];
 

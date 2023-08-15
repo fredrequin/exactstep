@@ -156,7 +156,7 @@ bool virtio_block::request(int queue_idx, int desc_idx, int read_size, int write
 //--------------------------------------------------------------------
 // clock:
 //--------------------------------------------------------------------
-int virtio_block::clock(void) 
+int virtio_block::clock(uint64_t cycles) 
 { 
     if (m_clk_div++ < 100)
         return 0;

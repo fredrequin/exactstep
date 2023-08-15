@@ -38,7 +38,7 @@ public:
         return true;
     }
 
-    int clock(void)
+    int clock(uint64_t cycles)
     {
         return 0;
     }

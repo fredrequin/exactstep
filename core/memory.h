@@ -117,7 +117,7 @@ public:
     virtual int min_access_size(void) { return 1; }
 
     // Clock: Clock peripheral (returns next call cycle delta)
-    virtual int clock(void) { return 0; }
+    virtual int clock(uint64_t cycles) { return 0; }
 
 public:
     memory_base *next;

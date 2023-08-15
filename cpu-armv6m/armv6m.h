@@ -24,7 +24,7 @@ public:
 
     void                reset(uint32_t start_addr);
     uint32_t            get_opcode(uint32_t pc);
-    void                step(void);
+    void                step(uint64_t cycles);
 
     void                set_interrupt(int irq);
     void                clr_interrupt(int irq) { }

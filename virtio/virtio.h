@@ -65,7 +65,7 @@ class cpu;
 class virtio_device
 {
 public:
-    virtual int  clock(void) { return 0; }
+    virtual int  clock(uint64_t cycles) { return 0; }
 };
 
 //-----------------------------------------------------------------
@@ -94,7 +94,7 @@ public:
     }
 
     void         reset(void);
-    int          clock(void);
+    int          clock(uint64_t cycles);
     virtual int  min_access_size(void) { return 1; }
 
     virtual bool write32(uint32_t address, uint32_t data);

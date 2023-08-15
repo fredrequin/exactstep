@@ -24,7 +24,7 @@ public:
 
     bool has_rx_space(void);
 
-    int  clock(void);
+    int  clock(uint64_t cycles);
 
 protected:
     net_tap *m_net;

@@ -2691,7 +2691,7 @@ bool rv64::execute(void)
 //-----------------------------------------------------------------
 // step: Step through one instruction
 //-----------------------------------------------------------------
-void rv64::step(void)
+void rv64::step(uint64_t cycles)
 {
     m_stats[STATS_INSTRUCTIONS]++;
 
@@ -2725,7 +2725,7 @@ void rv64::step(void)
         }
     }
 
-    cpu::step();
+    cpu::step(cycles);
 }
 //-----------------------------------------------------------------
 // set_interrupt: Register pending interrupt

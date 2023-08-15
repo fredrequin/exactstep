@@ -15,17 +15,17 @@
 //-----------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------
-cpu::cpu()
+cpu::cpu() :
+    m_memories        { NULL },
+    m_devices         { NULL },
+    m_console         { NULL },
+    m_has_breakpoints { false },
+    m_stopped         { false },
+    m_fault           { false },
+    m_break           { false },
+    m_trace           { 0 },
+    m_syscall_if      { NULL }
 {
-    m_memories           = NULL;
-    m_devices            = NULL;
-    m_console            = NULL;
-    m_has_breakpoints    = false;
-    m_stopped            = false;
-    m_fault              = false;
-    m_break              = false;
-    m_trace              = 0;
-    m_syscall_if         = NULL;
 }
 //-----------------------------------------------------------------
 // error: Handle an error
@@ -271,7 +271,7 @@ uint16_t cpu::ifetch16(uint32_t address)
 //-----------------------------------------------------------------
 // step: Step through one instruction
 //-----------------------------------------------------------------
-void cpu::step(void)
+void cpu::step(uint64_t cycles)
 {
     // Breakpoint hit?
     if (m_has_breakpoints && check_breakpoint(get_pc()))
@@ -280,7 +280,7 @@ void cpu::step(void)
     // Clock peripherals
     for (device *dev = m_devices; dev != NULL; dev = dev->device_next)
     {
-        dev->clock();
+        dev->clock(cycles);
 
         if (dev->event_irq_raised())
             set_interrupt(dev->get_irq_num());

@@ -136,7 +136,7 @@ public:
         return true;
     }
 
-    int clock(void)
+    int clock(uint64_t cycles)
     {
         // No rx char in the buffer, poll again...
         if (m_rx == -1)

@@ -24,7 +24,7 @@ public:
     virtual bool write_block(uint64_t sector_num, uint8_t *buf, int num_sectors);
 
     bool request(int queue_idx, int desc_idx, int read_size, int write_size);
-    int  clock(void);
+    int  clock(uint64_t cycles);
 
 protected:
     FILE   *m_fp;

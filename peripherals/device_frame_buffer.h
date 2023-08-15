@@ -62,7 +62,7 @@ public:
         return true;
     }
 
-    int clock(void)
+    int clock(uint64_t cycles)
     {
         if (++m_ticks == 100000)
         {

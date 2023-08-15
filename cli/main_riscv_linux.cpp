@@ -167,8 +167,7 @@ int main(int argc, char *argv[])
     // Device tree blob specified SoC
     platform_device_tree * plat = new platform_device_tree(march, device_blob, con);
     cpu *sim = plat->get_cpu();
-    if (!sim)
-        return -1;
+    if (!sim) return -1;
     sim->set_console(con);
 
     // Get memory
@@ -308,7 +307,7 @@ int main(int argc, char *argv[])
     while (!sim->get_fault() && !sim->get_stopped() && current_pc != stop_pc && !m_user_abort)
     {
         current_pc = sim->get_pc();
-        sim->step();
+        sim->step(cycles);
         cycles++;
 
         if (max_cycles != (int64_t)-1 && max_cycles == cycles)

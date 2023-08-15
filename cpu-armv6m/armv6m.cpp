@@ -156,7 +156,7 @@ uint32_t armv6m::get_opcode(uint32_t address)
 //-----------------------------------------------------------------
 // step: Step through one instruction
 //-----------------------------------------------------------------
-void armv6m::step(void)
+void armv6m::step(uint64_t cycles)
 {
     uint32_t pc, pc_x;
     uint16_t inst;
@@ -239,7 +239,7 @@ void armv6m::step(void)
         }
     }
 
-    cpu::step();
+    cpu::step(cycles);
 }
 //-----------------------------------------------------------------
 // set_interrupt: Register pending interrupt

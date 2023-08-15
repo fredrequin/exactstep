@@ -50,7 +50,7 @@ public:
 
     bool write32(uint32_t address, uint32_t data);
     bool read32(uint32_t address, uint32_t &data);
-    int  clock(void)
+    int  clock(uint64_t cycles)
     {
         return 0;
     }

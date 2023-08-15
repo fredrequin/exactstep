@@ -226,7 +226,7 @@ public:
         return true;
     }
 
-    int clock(void)
+    int clock(uint64_t cycles)
     {
         bool enable          = (m_reg[SPI_CR/4] & (1 << SPI_CR_SPE_SHIFT)) != 0;
         bool loopback        = (m_reg[SPI_CR/4] & (1 << SPI_CR_LOOP_SHIFT)) != 0;

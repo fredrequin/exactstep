@@ -95,7 +95,7 @@ public:
         return true;
     }
 
-    int clock(void)
+    int clock(uint64_t cycles)
     {
         m_reg_val += 1;
 

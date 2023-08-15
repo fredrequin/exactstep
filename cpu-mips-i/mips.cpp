@@ -1153,7 +1153,7 @@ bool mips_i::execute(void)
 //-----------------------------------------------------------------
 // step: Step through one instruction
 //-----------------------------------------------------------------
-void mips_i::step(void)
+void mips_i::step(uint64_t cycles)
 {
     m_stats[STATS_INSTRUCTIONS]++;
 
@@ -1177,7 +1177,7 @@ void mips_i::step(void)
         }
     }
 
-    cpu::step();
+    cpu::step(cycles);
 }
 //-----------------------------------------------------------------
 // set_interrupt: Register pending interrupt

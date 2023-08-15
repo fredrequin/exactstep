@@ -89,7 +89,7 @@ public:
         return true;
     }
 
-    int clock(void)
+    int clock(uint64_t cycles)
     {
         // Timer disabled
         if (!(m_reg_csr & (1 << TIMER_CSR_ENABLE_SHIFT)))

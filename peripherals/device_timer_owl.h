@@ -119,7 +119,7 @@ public:
         return true;
     }
 
-    int clock(void)
+    int clock(uint64_t cycles)
     {
         bool irq[NUM_TIMERS] = {false, false};
 

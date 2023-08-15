@@ -2243,7 +2243,7 @@ bool rv32::execute(void)
 //-----------------------------------------------------------------
 // step: Step through one instruction
 //-----------------------------------------------------------------
-void rv32::step(void)
+void rv32::step(uint64_t cycles)
 {
     m_stats[STATS_INSTRUCTIONS]++;
 
@@ -2278,7 +2278,7 @@ void rv32::step(void)
         }
     }
 
-    cpu::step();
+    cpu::step(cycles);
 }
 //-----------------------------------------------------------------
 // set_interrupt: Register pending interrupt

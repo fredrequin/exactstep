@@ -482,11 +482,11 @@ bool virtio::get_desc_size(int *pread_size, int *pwrite_size, int queue_idx, int
 //--------------------------------------------------------------------
 // clock:
 //--------------------------------------------------------------------
-int virtio::clock(void) 
+int virtio::clock(uint64_t cycles) 
 { 
     // Not ready
     if (!(m_status & (1 << VIRTIO_CONFIG_S_DRIVER)))
         return 0;
 
-    return m_dev->clock();
+    return m_dev->clock(cycles);
 }
