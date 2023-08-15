@@ -23,10 +23,16 @@
 class platform_virt: public platform_cpu
 {
 public:
-    platform_virt(const char *misa, uint32_t membase, uint32_t memsize, console_io *con_io = NULL): platform_cpu(misa, true, membase, memsize)
+    platform_virt
+    (
+        const char *misa,
+        uint32_t    membase,
+        uint32_t    memsize,
+        console_io *con_io = NULL
+    ):
+        platform_cpu(misa, true, membase, memsize)
     {
-        if (!m_cpu)
-            return;
+        if (!m_cpu) return;
 
         // OpenSBI peripherals
         m_cpu->attach_device(new device_irq_plic(CONFIG_PLIC_BASE, 11));

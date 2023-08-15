@@ -28,24 +28,29 @@
 class platform_basic: public platform_cpu
 {
 public:
-    platform_basic(const char *misa, uint32_t membase, uint32_t memsize, console_io *con_io = NULL): platform_cpu(misa, false, membase, memsize)
+    platform_basic
+    (
+        const char *misa,
+        uint32_t    membase,
+        uint32_t    memsize,
+        console_io *con_io = NULL
+    ):
+        platform_cpu(misa, false, membase, memsize)
     {
-        cpu * pcpu = get_cpu();
-        if (!pcpu)
-            return ;
+        if (!m_cpu) return;
 
         // Create IRQ controller
         device *irq_ctrl = new device_irq_ctrl(CONFIG_IRQCTRL_BASE, 11);
-        pcpu->attach_device(irq_ctrl);
+        m_cpu->attach_device(irq_ctrl);
 
         // Timer
-        pcpu->attach_device(new device_timer_owl(CONFIG_TIMER_BASE, irq_ctrl, CONFIG_TIMER_IRQ));
+        m_cpu->attach_device(new device_timer_owl(CONFIG_TIMER_BASE, irq_ctrl, CONFIG_TIMER_IRQ));
 
         // Uart
-        pcpu->attach_device(new device_uart_lite(CONFIG_UARTLITE_BASE, irq_ctrl, CONFIG_UARTLITE_IRQ, con_io));
+        m_cpu->attach_device(new device_uart_lite(CONFIG_UARTLITE_BASE, irq_ctrl, CONFIG_UARTLITE_IRQ, con_io));
 
         // SPI
-        pcpu->attach_device(new device_spi_lite(CONFIG_SPILITE_BASE, irq_ctrl, CONFIG_SPILITE_IRQ));
+        m_cpu->attach_device(new device_spi_lite(CONFIG_SPILITE_BASE, irq_ctrl, CONFIG_SPILITE_IRQ));
     }
 };
 

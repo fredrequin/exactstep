@@ -9,10 +9,22 @@
 #define __PLATFORM_CPU_H__
 
 #include "platform.h"
+
+#ifdef __USE_RV32__
 #include "rv32.h"
+#endif
+
+#ifdef __USE_RV64__
 #include "rv64.h"
+#endif
+
+#ifdef __USE_ARMV6M__
 #include "armv6m.h"
+#endif
+
+#ifdef __USE_MIPS1__
 #include "mips.h"
+#endif
 
 #include "device_systick.h"
 #include "device_sysuart.h"
@@ -21,10 +33,17 @@
 class platform_cpu: public platform
 {
 public:
-    platform_cpu(const char *misa, bool support_s = false, uint32_t membase = 0, uint32_t memsize = 0)
+    platform_cpu
+    (
+        const char *misa,
+        bool        support_s = false,
+        uint32_t    membase = 0,
+        uint32_t    memsize = 0
+    )
     {
         m_cpu = NULL;
 
+#ifdef __USE_RV32__
         if (!strncmp(misa, "RV32", 4) || !strncmp(misa, "rv32", 4))
         {
             printf("Platform: Select %s\n", misa);
@@ -40,7 +59,10 @@ public:
 
             m_cpu = cpu;
         }
-        else if (!strncmp(misa, "RV64", 4) || !strncmp(misa, "rv64", 4))
+#endif
+
+#ifdef __USE_RV64__
+        if (!strncmp(misa, "RV64", 4) || !strncmp(misa, "rv64", 4))
         {
             printf("Platform: Select %s\n", misa);
             rv64 *cpu = new rv64(membase, memsize);
@@ -55,10 +77,12 @@ public:
 
             m_cpu = cpu;
         }
-        else if (!strncmp(misa, "armv6", 5))
+#endif
+
+#ifdef __USE_ARMV6M__
+        if (!strncmp(misa, "armv6", 5))
         {
-            if (membase == 0)
-                membase = 0x20000000;
+            if (membase == 0) membase = 0x20000000;
 
             printf("Platform: Select ARMv6m\n");
             armv6m *cpu = new armv6m(membase, memsize);
@@ -71,12 +95,16 @@ public:
 
             m_cpu = cpu;
         }
-        else if (!strncmp(misa, "mips1", 5) || !strncmp(misa, "mips", 4))
+#endif
+
+#ifdef __USE_MIPS1__
+        if (!strncmp(misa, "mips1", 5) || !strncmp(misa, "mips", 4))
         {
             printf("Platform: Select %s\n", misa);
             mips_i * cpu = new mips_i(membase, memsize);
             m_cpu = cpu;
         }
+#endif
     }
 
     virtual cpu* get_cpu(void) { return m_cpu; }

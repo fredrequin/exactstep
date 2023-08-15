@@ -11,8 +11,12 @@ HAS_NETWORK ?= False
 # Source Files
 SRC_DIR    = core peripherals cpu-rv32 cpu-rv64 cpu-armv6m cpu-mips-i cli platforms device-tree display net virtio sbi
 
-CFLAGS	    = -O2 -fPIC
+CFLAGS	    = -O2 -fPIC -std=gnu++11
 CFLAGS     += -Wno-format
+CFLAGS     += -D__USE_RV32__
+CFLAGS     += -D__USE_RV64__
+CFLAGS     += -D__USE_ARMV6M__
+CFLAGS     += -D__USE_MIPS1__
 ifneq ($(HAS_NETWORK),False)
   CFLAGS   += -DINCLUDE_NET_DEVICE
 endif
