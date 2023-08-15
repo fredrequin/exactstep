@@ -16,6 +16,11 @@
 class device_dummy: public device
 {
 public:
+    device_dummy(std::string name, uint32_t base_addr, uint32_t size): device(name, base_addr, size, NULL, -1)
+    {
+        reset();
+    }
+    
     device_dummy(uint32_t base_addr, uint32_t size): device("dummy", base_addr, size, NULL, -1)
     {
         reset();
@@ -23,13 +28,13 @@ public:
     
     bool write32(uint32_t address, uint32_t data)
     {
-        printf("DUMMY (WR): %08x=%08x\n", address, data);
+        printf("%s (WR): %08x=%08x\n", m_name.c_str(), address, data);
         return true;
     }
     bool read32(uint32_t address, uint32_t &data)
     {
         data = 0;
-        printf("DUMMY (RD): %08x=%08x\n", address, data);
+        printf("%s (RD): %08x=%08x\n", m_name.c_str(), address, data);
         return true;
     }
 
