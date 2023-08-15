@@ -63,11 +63,11 @@ protected:
     uint32_t            armv6m_sign_extend(uint32_t val, int offset);
     void                armv6m_dump_inst(uint16_t inst);
     uint32_t            armv6m_exception(uint32_t pc, uint32_t exception);
-    void                armv6m_exc_return(uint32_t pc);
+    uint32_t            armv6m_exc_return(uint32_t pc);
 
 public:
     int                 armv6m_decode(uint16_t inst);
-    void                armv6m_execute(uint16_t inst, uint16_t inst2);
+    uint32_t            armv6m_execute(uint16_t inst, uint16_t inst2);
 
 protected:  
 

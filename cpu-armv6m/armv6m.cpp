@@ -158,35 +158,31 @@ uint32_t armv6m::get_opcode(uint32_t address)
 //-----------------------------------------------------------------
 void armv6m::step(void)
 {
+    uint32_t pc, pc_x;
     uint16_t inst;
     uint16_t inst2;
     int inst_32_bit;
 
+    pc = m_regfile[REG_PC];
     // EXC_RETURN value in PC
-    if ((m_regfile[REG_PC] & EXC_RETURN) == EXC_RETURN)
-        armv6m_exc_return(m_regfile[REG_PC]);
+    if ((pc & EXC_RETURN) == EXC_RETURN) pc = armv6m_exc_return(pc);
 
     // Fetch
-    inst = armv6m_read_inst(m_regfile[REG_PC]);
+    inst = armv6m_read_inst(pc);
 
     // Decode
     inst_32_bit = armv6m_decode(inst);
 
     // [32-bit instruction] Fetch another half word
-    if (inst_32_bit)
-        inst2 = armv6m_read_inst(m_regfile[REG_PC]+2);
-    else
-        inst2 = 0;
+    inst2 = (inst_32_bit) ? armv6m_read_inst(pc + 2) : 0;
 
-    DPRINTF(LOG_FETCH, ("%08X: 0x%04X \n",m_regfile[REG_PC],inst));
+    DPRINTF(LOG_FETCH, ("%08X: 0x%04X \n", pc, inst));
     
-    if (TRACE_ENABLED(LOG_INST))
-        armv6m_dump_inst(inst);
-
-    uint32_t pc_x = m_regfile[REG_PC];
+    if (TRACE_ENABLED(LOG_INST)) armv6m_dump_inst(inst);
 
     // Execute
-    armv6m_execute(inst, inst2);
+    pc_x = pc;
+    pc = armv6m_execute(inst, inst2);
 
     // Monitor executed instructions
     log_commit_pc(pc_x);
@@ -214,11 +210,11 @@ void armv6m::step(void)
 
         if (m_apsr != old_apsr)
         {
-            printf("%08X: Flags = %c%c%c%c\n", m_regfile[REG_PC],
+            printf("%08X: Flags = %c%c%c%c\n", pc, // or pc_x ??
                                     m_apsr & APSR_N ? 'N':'-', 
-                                     m_apsr & APSR_Z ? 'Z':'-',
-                                     m_apsr & APSR_C ? 'C':'-',
-                                     m_apsr & APSR_V ? 'V':'-');
+                                    m_apsr & APSR_Z ? 'Z':'-',
+                                    m_apsr & APSR_C ? 'C':'-',
+                                    m_apsr & APSR_V ? 'V':'-');
             old_apsr = m_apsr;
         }
     }
@@ -227,7 +223,7 @@ void armv6m::step(void)
 // TODO: Verify likely to be incorrect...
     if (m_systick_irq && (m_current_mode == MODE_THREAD) && !(m_primask & PRIMASK_PM))
     {
-        m_regfile[REG_PC] = armv6m_exception(m_regfile[REG_PC], 15);
+        m_regfile[REG_PC] = armv6m_exception(pc, 15);
         m_systick_irq = false;
     }
 
@@ -576,14 +572,15 @@ uint32_t armv6m::armv6m_exception(uint32_t pc, uint32_t exception)
 //-------------------------------------------------------------------
 // armv6m_exc_return: Handle returning from an exception
 //-------------------------------------------------------------------
-void armv6m::armv6m_exc_return(uint32_t pc)
+uint32_t armv6m::armv6m_exc_return(uint32_t pc)
 {
     // Handler (exception) mode
-    if(m_current_mode != MODE_HANDLER)
-        return ;
-
+    if (m_current_mode != MODE_HANDLER)
+    {
+        return pc;
+    }
     // EXC_RETURN value
-    if((pc & EXC_RETURN) == EXC_RETURN)
+    else
     {
         uint32_t sp;
 
@@ -629,6 +626,8 @@ void armv6m::armv6m_exc_return(uint32_t pc)
         m_apsr = read32(sp);
         sp+=4;
         armv6m_update_sp(sp);
+        
+        return m_regfile[REG_PC];
     }
 }
 //-------------------------------------------------------------------
@@ -1270,7 +1269,7 @@ int armv6m::armv6m_decode(uint16_t inst)
 //-------------------------------------------------------------------
 // armv6m_execute:
 //-------------------------------------------------------------------
-void armv6m::armv6m_execute(uint16_t inst, uint16_t inst2)
+uint32_t armv6m::armv6m_execute(uint16_t inst, uint16_t inst2)
 {
     uint32_t reg_rm = m_regfile[m_rm];
     uint32_t reg_rn = m_regfile[m_rn];
@@ -1477,9 +1476,9 @@ void armv6m::armv6m_execute(uint16_t inst, uint16_t inst2)
                         m_regfile[i] = read32(reg_rn);
                         if (i == REG_PC)
                         {
-                            if ((m_regfile[i] & EXC_RETURN) != EXC_RETURN)
-                                m_regfile[i] &= ~1;
-                            pc = m_regfile[i];
+                            if ((m_regfile[REG_PC] & EXC_RETURN) != EXC_RETURN)
+                                m_regfile[REG_PC] &= ~1;
+                            pc = m_regfile[REG_PC];
                         }
                         reg_rn += 4;
                         m_reglist &= ~(1 << i);
@@ -1709,9 +1708,9 @@ void armv6m::armv6m_execute(uint16_t inst, uint16_t inst2)
 
                         if (i == REG_PC)
                         {
-                            if ((m_regfile[i] & EXC_RETURN) != EXC_RETURN)
-                                m_regfile[i] &= ~1;
-                            pc = m_regfile[i];
+                            if ((m_regfile[REG_PC] & EXC_RETURN) != EXC_RETURN)
+                                m_regfile[REG_PC] &= ~1;
+                            pc = m_regfile[REG_PC];
                         }
                         
                         m_reglist &= ~(1 << i);
@@ -1887,7 +1886,10 @@ void armv6m::armv6m_execute(uint16_t inst, uint16_t inst2)
             // 0 1 0 0 0 1 1 1 0 Rm (0) (0) (0)
             case INST_BX_OPCODE:
             {
-                pc = reg_rm & ~1;
+                if ((reg_rm & EXC_RETURN) == EXC_RETURN)
+                    pc = reg_rm;
+                else
+                    pc = reg_rm & ~1;
             }
             break;
             // SUB - SUB SP,SP,#<imm7>
@@ -2365,4 +2367,6 @@ void armv6m::armv6m_execute(uint16_t inst, uint16_t inst2)
     }
 
     m_regfile[REG_PC] = pc;
+    
+    return pc;
 }
