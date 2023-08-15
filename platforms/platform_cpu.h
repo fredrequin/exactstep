@@ -38,7 +38,8 @@ public:
         const char *misa,
         bool        support_s = false,
         uint32_t    membase = 0,
-        uint32_t    memsize = 0
+        uint32_t    memsize = 0,
+        uint32_t    frequency = 100000000
     )
     {
         m_cpu = NULL;
@@ -105,6 +106,8 @@ public:
             m_cpu = cpu;
         }
 #endif
+        
+        if (m_cpu) m_cpu->set_cpu_frequency(frequency);
     }
 
     virtual cpu* get_cpu(void) { return m_cpu; }

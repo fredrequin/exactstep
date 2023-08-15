@@ -16,6 +16,9 @@
 // Constructor
 //-----------------------------------------------------------------
 cpu::cpu() :
+    m_p_cycles        { NULL },
+    m_clock_freq      { 100000000 },
+    m_clock_per       { 10.0 },
     m_memories        { NULL },
     m_devices         { NULL },
     m_console         { NULL },

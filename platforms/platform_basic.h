@@ -33,11 +33,15 @@ public:
         const char *misa,
         uint32_t    membase,
         uint32_t    memsize,
-        console_io *con_io = NULL
+        console_io *con_io = NULL,
+        uint64_t   *p_cycles = NULL,
+        uint32_t    frequency = 100000000
     ):
         platform_cpu(misa, false, membase, memsize)
     {
         if (!m_cpu) return;
+        m_cpu->set_cpu_frequency(frequency);
+        m_cpu->set_cycle_counter(p_cycles);
 
         // Create IRQ controller
         device *irq_ctrl = new device_irq_ctrl(CONFIG_IRQCTRL_BASE, 11);

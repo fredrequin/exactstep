@@ -108,7 +108,15 @@ public:
     virtual void      stats_dump(void) = 0;
 
     // Console
-    void              set_console(console_io *cio)  { m_console = cio; }
+    void              set_console(console_io *cio)   { m_console = cio; }
+    
+    // CPU clock
+    void              set_cpu_frequency(uint32_t f)  { m_clock_freq = f; m_clock_per = 1.0E9 / f; }
+    uint32_t          get_cpu_frequency(void)        { return m_clock_freq; }
+    void              set_cycle_counter(uint64_t *p) { m_p_cycles = p; }
+    void              set_cycle_value(uint64_t c)    { *m_p_cycles = c; }
+    uint64_t          get_cycle_value(void)          { return *m_p_cycles; }
+    uint64_t          get_timestamp_ns(void)         { return (uint64_t)(m_clock_per * (*m_p_cycles)); }
 
     // Error message
     bool              error(bool is_fatal, const char *fmt, ...);
@@ -117,6 +125,11 @@ public:
     device *          find_device(std::string name, int idx);
 
 protected:
+    // CPU clock
+    uint64_t           *m_p_cycles;
+    uint32_t            m_clock_freq; // Frequency (in Hz)
+    double              m_clock_per;  // Period (in ns)
+
     // Memory
     memory_base        *m_memories;
     device             *m_devices;

@@ -60,7 +60,7 @@ static void help_options(void)
 {
     fprintf (stderr,"Usage:\n");
     fprintf (stderr,"  --elf        | -f FILE       File to load (ELF or BIN)\n");
-    fprintf (stderr,"  --march      | -m MISA       Machine variant (e.g. RV32IMAC, RV64I, ...)\n");
+    fprintf (stderr,"  --march      | -m MISA       Machine variant (e.g. RV32IMAC, RV64I, armv6, mips1, ...)\n");
     fprintf (stderr,"  --platform   | -P PLATFORM   Platform to simulate (basic|virt)\n");
     fprintf (stderr,"  --dtb        | -D FILE       Device tree blob (binary)\n");
     fprintf (stderr,"  --trace      | -t 1/0        Enable instruction trace\n");
@@ -357,9 +357,9 @@ int main(int argc, char *argv[])
         plat = new platform_device_tree(march, device_blob, con);
     // Basic platform
     else if (!strcmp(platform_name, "basic"))
-        plat = new platform_basic(march, 0, 0, con);
+        plat = new platform_basic(march, 0x20000000, 0x00010000, con, &cycles, 100000000);
     else if (!strcmp(platform_name, "virt"))
-        plat = new platform_virt(march, 0x80000000, (64 << 20), con);
+        plat = new platform_virt(march, 0x80000000, (64 << 20), con, &cycles, 100000000);
     else
     {
         fprintf (stderr,"Error: Unsupported platform\n");
@@ -439,7 +439,7 @@ int main(int argc, char *argv[])
 
         // Find boot vectors if ELF file
         if (!elf.get_symbol("vectors", start_addr))
-            start_addr = elf.get_entry_point();
+            start_addr = elf.get_entry_point() & ~1;
 
         // Lookup memory dump addresses?
         uint32_t sym_addr;

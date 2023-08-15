@@ -168,6 +168,8 @@ int main(int argc, char *argv[])
     platform_device_tree * plat = new platform_device_tree(march, device_blob, con);
     cpu *sim = plat->get_cpu();
     if (!sim) return -1;
+    sim->set_cpu_frequency(100000000);
+    sim->set_cycle_counter(&cycles);
     sim->set_console(con);
 
     // Get memory
